@@ -41,6 +41,8 @@
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnHelp = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
+            this.lblMathTokens = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -57,7 +59,7 @@
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(698, 120);
+            this.button1.Location = new System.Drawing.Point(698, 153);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 1;
@@ -77,7 +79,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 100);
+            this.label2.Location = new System.Drawing.Point(12, 125);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(102, 13);
             this.label2.TabIndex = 3;
@@ -86,7 +88,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 125);
+            this.label3.Location = new System.Drawing.Point(12, 158);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(37, 13);
             this.label3.TabIndex = 4;
@@ -95,7 +97,7 @@
             // lblPostfix
             // 
             this.lblPostfix.AutoSize = true;
-            this.lblPostfix.Location = new System.Drawing.Point(120, 100);
+            this.lblPostfix.Location = new System.Drawing.Point(126, 125);
             this.lblPostfix.Name = "lblPostfix";
             this.lblPostfix.Size = new System.Drawing.Size(0, 13);
             this.lblPostfix.TabIndex = 5;
@@ -153,15 +155,15 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.AutoScroll = true;
             this.panel1.Controls.Add(this.pictureBox1);
-            this.panel1.Location = new System.Drawing.Point(0, 149);
+            this.panel1.Location = new System.Drawing.Point(0, 182);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(772, 401);
+            this.panel1.Size = new System.Drawing.Size(772, 368);
             this.panel1.TabIndex = 11;
             // 
             // btnHelp
             // 
             this.btnHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnHelp.Location = new System.Drawing.Point(617, 120);
+            this.btnHelp.Location = new System.Drawing.Point(617, 153);
             this.btnHelp.Name = "btnHelp";
             this.btnHelp.Size = new System.Drawing.Size(75, 23);
             this.btnHelp.TabIndex = 12;
@@ -169,12 +171,31 @@
             this.btnHelp.UseVisualStyleBackColor = true;
             this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(12, 100);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(75, 13);
+            this.label4.TabIndex = 13;
+            this.label4.Text = "Math Tokens :";
+            // 
+            // lblMathTokens
+            // 
+            this.lblMathTokens.AutoSize = true;
+            this.lblMathTokens.Location = new System.Drawing.Point(120, 100);
+            this.lblMathTokens.Name = "lblMathTokens";
+            this.lblMathTokens.Size = new System.Drawing.Size(0, 13);
+            this.lblMathTokens.TabIndex = 14;
+            // 
             // Form1
             // 
             this.AcceptButton = this.button1;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 562);
+            this.Controls.Add(this.lblMathTokens);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.btnHelp);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.checkBox1);
@@ -214,6 +235,8 @@
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button btnHelp;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label lblMathTokens;
 
     }
 }

@@ -123,6 +123,11 @@ namespace MathParser
                 return answer;
         }
 
+        /// <summary>
+        /// this method returns the right angle to use when evaluating the operation based on the using radians flag
+        /// </summary>
+        /// <param name="angle"></param>
+        /// <returns></returns>
         private static double GetAngleForOperation(double angle)
         {
             if (UsingRadians)
@@ -148,6 +153,15 @@ namespace MathParser
         /// <returns></returns>
         public static List<string> ExtractMathTokens(string expression)
         {
+            /*
+             * WARNING
+             * this method works with magic
+             * i will not try commenting it because i fear it will break something in it
+             * it works and i know it works
+             * if you do try to read it then do so at your own risk
+             * YOU HAVE BEEN WARNED !!!!
+             */
+
             List<string> tokens = new List<string>();
 
             if (expression.Length == 0)
@@ -249,9 +263,15 @@ namespace MathParser
                 tokens.Add(tokenSoFar);
             }
 
+            PostProcessTokens(tokens);
             return tokens;
         }
 
+        /// <summary>
+        /// this method removes spaces and trims the expression to prepare it for token extraction
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         public static string OptimizeExpression(string expression)
         {
             string optimizedExpression = expression;
@@ -265,11 +285,70 @@ namespace MathParser
             return optimizedExpression;
         }
 
+        /// <summary>
+        /// this method walks the tokens list and performs post processing like making + and 3 a single +3 token
+        /// </summary>
+        /// <param name="tokens"></param>
+        private static void PostProcessTokens(List<string> tokens)
+        {
+            for (int i = 0; i < tokens.Count; i++)
+            {
+                string currentToken = tokens[i];
+
+                // we are only interested in the + and - operations right now
+                if (string.Equals(currentToken, "+") || string.Equals(currentToken, "-"))
+                {
+                    // if we are at the beginning of the tokens then we only need to look at the next token
+                    if (i == 0)
+                    {
+                        // make sure we have enough tokens
+                        if (i + 1 != tokens.Count)
+                        {
+                            string nextToken = tokens[i + 1];
+                            if (IsNumber(nextToken))
+                            {
+                                nextToken = currentToken + nextToken;
+                                tokens[i + 1] = nextToken;
+                                tokens.RemoveAt(i);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // this is the last token and should be removed
+                        if (i + 1 == tokens.Count)
+                        {
+                            tokens.RemoveAt(i);
+                        }
+                        else
+                        {
+                            string prevToken = tokens[i - 1];
+                            string nextToken = tokens[i + 1];
+
+                            if (!IsNumber(prevToken) && IsNumber(nextToken) &&
+                                (!string.Equals(prevToken, "(") || !string.Equals(prevToken, ")")))
+                            {
+                                nextToken = currentToken + nextToken;
+                                tokens[i + 1] = nextToken;
+                                tokens.RemoveAt(i);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         public static bool IsNumber(char c)
         {
+            // we count the . as a number, if we dont we will get the . as a separate token
             return char.IsDigit(c) || c == '.';
         }
 
+        /// <summary>
+        /// return true if the character is a single letter operation like +, -, *
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
         public static bool IsSingleLetterOperation(char c)
         {
             return c == '-' ||
@@ -284,9 +363,11 @@ namespace MathParser
         {
             if (string.IsNullOrWhiteSpace(s)) return false;
 
-            for (int i = 0; i < s.Length; i++)
-                if (!IsNumber(s[i]))
-                    return false;
+            double tmp;
+            if (!double.TryParse(s, out tmp))
+            {
+                return false;
+            }
 
             return true;
         }
@@ -298,6 +379,7 @@ namespace MathParser
 
         public static List<string> ConvertToPostfix(List<string> infixTokens)
         {
+            // if its not a valid tokens then return nothing
             if (!IsValidInfix(infixTokens))
             {
                 LastError = "Failed to convert to postfix notation, the provided infix tokens are invalid, " + LastError;
@@ -353,6 +435,11 @@ namespace MathParser
             return (IsValidInfix(ExtractMathTokens(expression)));
         }
 
+        /// <summary>
+        /// return true if there are no wrong operations or a missing bracket and such things
+        /// </summary>
+        /// <param name="expressionTokens"></param>
+        /// <returns></returns>
         public static bool IsValidInfix(List<string> expressionTokens)
         {
             if (expressionTokens.Count == 0)
@@ -365,14 +452,12 @@ namespace MathParser
             {
                 string token = expressionTokens[i];
 
-                if (IsNumber(token))
-                {
-                }
-                else
+                if (!IsNumber(token))
                 {
                     int operationPriority = GetOperationPriority(token);
                     if (operationPriority == -1)
                     {
+                        // this is a wrong operation
                         LastError = "we have encountered an unknown operation : " + token;
                         return false;
                     }

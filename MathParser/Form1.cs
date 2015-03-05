@@ -29,36 +29,33 @@ namespace MathParser
 
         private void button1_Click(object sender, EventArgs e)
         {
-            try
+            string infix = textBox1.Text;
+
+            var l = MathHelper.OptimizeExpression(infix);
+            lblOptimized.Text = l;
+
+            lblMathTokens.Text = "";
+            var aa = MathHelper.ExtractMathTokens(infix);
+            foreach (var p in aa)
+                lblMathTokens.Text += p + " _ ";
+
+            lblPostfix.Text = "";
+            var s = MathHelper.ConvertToPostfix(infix);
+            foreach (var a in s)
+                lblPostfix.Text += a + " _ ";
+
+            tree = new MathTree();
+
+            if (tree.BuildFromInfix(infix))
             {
-                string infix = textBox1.Text;
-                infix = MathHelper.OptimizeExpression(infix);
-                var l = MathHelper.ExtractMathTokens(infix);
-                lblOptimized.Text = "";
-                foreach (var s in l)
-                    lblOptimized.Text += s + " _ ";
+                lblResult.Text = tree.Evaluate().ToString();
 
-                lblPostfix.Text = "";
-                foreach (string s in MathHelper.ConvertToPostfix(infix))
-                    lblPostfix.Text += s + " _ ";
-
-                tree = new MathTree();
-                if (tree.BuildFromPostfix(MathHelper.ConvertToPostfix(infix)))
-                {
-                    lblResult.Text = tree.Evaluate().ToString();
-
-                    pictureBox1.Image = MathTreeRenderer.RenderTree(tree);
-                    this.Invalidate();
-                }
-                else
-                {
-                    MessageBox.Show(tree.LastError);
-                }
+                pictureBox1.Image = MathTreeRenderer.RenderTree(tree);
+                this.Invalidate();
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show("Error while parsing the expression\nError Message : " + ex.Message +
-                    "\nStack Trace : \n" + ex.StackTrace);
+                MessageBox.Show(tree.LastError);
             }
         }
 
