@@ -38,14 +38,14 @@ namespace MathParser
         {
             FillNode = true;
             NodeShapeWidth = 3;
-            NodeColor = Color.Gray;
+            NodeColor = Color.DeepSkyBlue;
             TextColor = Color.White;
 
             NodeImageWidth = 65;
             NodeImageHeight = 40;
 
             nodePen = new Pen(NodeColor, NodeShapeWidth);
-            nodeArrowsPen = new Pen(Brushes.Black, 2.5f)
+            nodeArrowsPen = new Pen(Brushes.DarkGray, 4.5f)
             {
                 EndCap = LineCap.ArrowAnchor,
                 StartCap = LineCap.Round

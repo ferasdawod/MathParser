@@ -11,6 +11,15 @@ namespace MathParser
         public MathNode Root { get; set; }
         public string LastError { get; private set; }
         public bool Initialized { get; set; }
+        public bool Evaluated { get; set; }
+
+
+        // these helper are here so if we want them we wont have to recalculate them
+        public string OptimizedExpression { get; set; }
+        public List<string> ExtractedTokens { get; set; }
+        public List<string> PostfixTokens { get; set; }
+
+        private double _answer = 0.0d;
 
         #region Constructors
 
@@ -25,7 +34,16 @@ namespace MathParser
 
         public double Evaluate()
         {
-            return Root.Evaluate();
+            if (Evaluated)
+            {
+                return _answer;
+            }
+            else
+            {
+                _answer = Root.Evaluate();
+                Evaluated = true;
+                return _answer;
+            }
         }
 
         public bool BuildFromInfix(string infixExpression)
@@ -35,16 +53,17 @@ namespace MathParser
                 Initialized = false;
 
                 // first prepare the infix string by extracting all the math tokens in it
-                List<string> mathTokens = MathHelper.ExtractMathTokens(infixExpression);
-                if (mathTokens.Count == 0)
+                OptimizedExpression = MathHelper.OptimizeExpression(infixExpression);
+                ExtractedTokens = MathHelper.ExtractMathTokens(OptimizedExpression);
+                if (ExtractedTokens.Count == 0)
                 {
                     LastError = "Failed to build the tree, Failed to extract math tokens, " + MathHelper.LastError;
                     return false;
                 }
 
                 // then we covert those tokens to postfix form
-                List<string> postfixTokens = MathHelper.ConvertToPostfix(mathTokens);
-                if (postfixTokens.Count == 0)
+                PostfixTokens = MathHelper.ConvertToPostfix(ExtractedTokens);
+                if (PostfixTokens.Count == 0)
                 {
                     LastError = "Failed to build the tree, Failed to convert to postfix, " + MathHelper.LastError;
                     return false;
@@ -53,9 +72,9 @@ namespace MathParser
                 // we use a stack to build the expression tree
                 Stack<MathNode> nodeStack = new Stack<MathNode>();
 
-                for (int i = 0; i < postfixTokens.Count; i++)
+                for (int i = 0; i < PostfixTokens.Count; i++)
                 {
-                    string currentToken = postfixTokens[i];
+                    string currentToken = PostfixTokens[i];
 
                     MathNode node = MathNodeFactory.CreateNode(currentToken);
 
@@ -81,8 +100,11 @@ namespace MathParser
                 }
 
                 // by the end of the algorithm we should only have one node in the stack
-                // if everything is ok this should never be called
-                System.Diagnostics.Debug.Assert(nodeStack.Count == 1, "the stack has more than one node");
+                if (nodeStack.Count > 1)
+                {
+                    LastError = "Failed to create the math tree, most likely you have a math or syntac error.\n Check your input and try again !";
+                    return false;
+                }
 
                 // the root is the one remaining node in the stack
                 Root = nodeStack.Pop();

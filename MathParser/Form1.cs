@@ -11,9 +11,12 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
+using MetroFramework;
+using MetroFramework.Forms;
+
 namespace MathParser
 {
-    public partial class Form1 : Form
+    public partial class Form1 : MetroForm
     {
         MathTree tree;
 
