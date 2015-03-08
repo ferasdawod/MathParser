@@ -158,5 +158,52 @@ namespace MathParser
             this.Invalidate();
         }
 
+        private void btnSaveImage_Click(object sender, EventArgs e)
+        {
+            Image img = pctrTree.Image;
+
+            if (img == null)
+            {
+                MetroMessageBox.Show(this, "No Tree is rendered yet", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                SaveFileDialog dialog = new SaveFileDialog();
+                dialog.AddExtension = true;
+                dialog.CheckPathExists = true;
+                dialog.DefaultExt = ".png |*.png";
+                dialog.Filter = ".png |*.png";
+                dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                dialog.OverwritePrompt = true;
+                dialog.Title = "Save As Image";
+
+                if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    SaveImage(img, dialog.FileName);
+                }
+            }
+        }
+
+        private async void SaveImage(Image img, string path)
+        {
+            pnlLoading.Visible = true;
+            lblCurrentTask.Text = "Saving Image";
+
+            ToggleControls(false);
+
+            await Task.Run(() =>
+            {
+                Bitmap newImg = new Bitmap(img.Width, img.Height);
+                Graphics g = Graphics.FromImage(newImg);
+                g.FillRectangle(Brushes.LightGray, 0f, 0f, newImg.Width, newImg.Height);
+                g.DrawImage(img, 0, 0);
+                newImg.Save(path);
+            });
+
+            ToggleControls(true);
+            pnlLoading.Visible = false;
+
+            MetroMessageBox.Show(this, "Tree Saved To " + path, "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
     }
 }
